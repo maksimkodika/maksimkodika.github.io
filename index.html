@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.21.0/phaser.min.js"></script>
+        <title>Рыцарь</title>
+    </head>
+    <body>
+        <div id="one_tap" style="text-align: center;"></div>
+        <script>
+            var bg;
+            var hero;
+            var heroAttacking = false;
+            function preload(){
+                this.load.atlas(
+                    'atlas',
+                    'atlas.png',
+                    'atlas.json'
+                );
+            }
+            function create(){
+                this.anims.create({ 
+                    key: 'hero_idle',    
+                    frames: this.anims.generateFrameNames('atlas', { 
+                        prefix: 'hero/hero_idle_', 
+                        end: 5
+                    }), 
+                    repeat: -1 
+                });
+                this.anims.create({ 
+                    key: 'hero_attack',  
+                    frames: this.anims.generateFrameNames('atlas', { 
+                        prefix: 'hero/hero_attack_',
+                        end: 5
+                    }), 
+                    repeat: -1
+                });
+                
+                
+                bg = this.add.sprite(0, 0, 'atlas', 'bg_level_0');
+                bg.x = bg.width / 2;
+                bg.y = bg.height / 2;
+                
+                hero = this.add.sprite(0, 0, 'hero');
+                hero.x = bg.width / 2;
+                hero.y = bg.height / 2 + hero.height;
+                
+                heroIdle();
+                this.input.on("pointerdown", heroAttack, this);
+            }
+            function update(){
+
+            }
+            
+            function heroIdle(){
+                hero.play('hero_idle');
+                heroAttacking = false;
+            }
+            function heroAttack(tap){
+                heroAttacking = true;
+                hero.flipX = tap.downX > bg.x;
+                hero.play('hero_attack', true); 
+                setTimeout(heroIdle, 350);
+            }
+            
+        new Phaser.Game({
+		    scene: {
+		      preload: preload,
+		      create: create,
+		      update: update,
+		    },
+		    physics: { default: 'arcade' },
+		    parent: 'one_tap',
+		    width: 360,
+		    height: 480,
+		    backgroundColor: '#000000',
+		  });  
+        </script>
+    </body>
+</html>
